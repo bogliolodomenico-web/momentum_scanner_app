@@ -6,5 +6,9 @@
     "ISP.MI":  "Intesa Sanpaolo",
     "UCG.MI":  "UniCredit",
     "LDO.MI":  "Leonardo",
-    "BC.MI":   "Brunello Cucinelli"
+    "BC.MI":   "Brunello Cucinelli",
+    "NVDA":	   "NVIDIA Corporation",
+    "MSFT":	   "Microsoft Corporation",
+    "AAPL":	   "Apple Inc.",
+    "AMZN":	   "Amazon.com, Inc."
 }
