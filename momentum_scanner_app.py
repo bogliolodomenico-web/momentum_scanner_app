@@ -148,17 +148,22 @@ CFG_BASE = {
     "RSI_OB_LEVEL": 90, "PSAR_STEP": 0.0012, "PSAR_MAX_STEP": 0.010,
 }
 
-ALL_TICKERS = {
-    "A2A.MI":  "A2A",
-    "ERG.MI":  "ERG",
-    "ENEL.MI": "ENEL",
-    "ENI.MI":  "ENI",
-    "ISP.MI":  "Intesa Sanpaolo",
-    "UCG.MI":  "UniCredit",
-    "LDO.MI":  "Leonardo",
-    "RACE.MI": "Ferrari",
-    "BC.MI":   "Brunello Cucinelli",
-}
+import json
+import os
+
+# Carica i ticker dal file JSON
+def load_tickers_from_json(file_path="tickers.json"):
+    if not os.path.exists(file_path):
+        # Fallback nel caso il file non esista
+        return {
+            "A2A.MI": "A2A",
+            "ENEL.MI": "ENEL",
+            "ENI.MI": "ENI"
+        }
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+ALL_TICKERS = load_tickers_from_json()
 
 
 # ─────────────────────────────────────────────
