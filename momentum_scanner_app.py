@@ -153,6 +153,7 @@ hide_streamlit_style = """
             font-weight: 600;
             color: #f5e6d3;
         }
+        }
         .badge-on, .badge-off, .badge-warn, .badge-changed {
             font-weight: 700;
             letter-spacing: 0.5px;
