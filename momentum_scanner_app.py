@@ -35,6 +35,7 @@ st.set_page_config(
 
 # ─────────────────────────────────────────────
 # CSS per nascondere elementi superflui di Streamlit
+# e per personalizzare sfondo, pulsanti e card
 # ─────────────────────────────────────────────
 hide_streamlit_style = """
     <style>
@@ -58,6 +59,113 @@ hide_streamlit_style = """
         
         /* Ulteriore rimozione spazio in alto */
         .main > div:first-child {padding-top: 0rem;}
+
+        /* ========== SFONDO PERSONALIZZATO ========== */
+        .stApp {
+            background: linear-gradient(135deg, #0a0c10 0%, #1a1e2a 100%);
+        }
+        .main {
+            background: transparent;
+        }
+        
+        /* ========== PULSANTI EVIDENZIATI ========== */
+        .stButton > button {
+            background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 0.6rem 2rem !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            font-family: 'DM Sans', sans-serif !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 12px rgba(31,111,235,0.3) !important;
+        }
+        .stButton > button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(31,111,235,0.5) !important;
+            background: linear-gradient(135deg, #388bfd, #58a6ff) !important;
+        }
+        /* Pulsante Aggiorna ora nella sidebar */
+        .sidebar .stButton > button {
+            width: 100%;
+            background: linear-gradient(135deg, #238636, #2ea043) !important;
+            box-shadow: 0 2px 8px rgba(35,134,54,0.3) !important;
+        }
+        .sidebar .stButton > button:hover {
+            background: linear-gradient(135deg, #2ea043, #3fb950) !important;
+            box-shadow: 0 4px 12px rgba(35,134,54,0.5) !important;
+        }
+        
+        /* ========== CARD CON BORDI EVIDENZIATI ========== */
+        .card-setup-on {
+            background: linear-gradient(135deg, #0d2818 0%, #0f3320 100%);
+            border: 2px solid #238636 !important;
+            border-radius: 12px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 2px 8px rgba(35,134,54,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-setup-on:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(35,134,54,0.4);
+        }
+        .card-setup-off {
+            background: linear-gradient(135deg, #1a0e0e 0%, #220f0f 100%);
+            border: 2px solid #da3633 !important;
+            border-radius: 12px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 2px 8px rgba(218,54,51,0.2);
+        }
+        .card-setup-off:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(218,54,51,0.3);
+        }
+        .card-illiquid {
+            background: linear-gradient(135deg, #1a1200 0%, #221800 100%);
+            border: 2px solid #d29922 !important;
+            border-radius: 12px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        .card-changed {
+            background: linear-gradient(135deg, #0d1b2a 0%, #12263d 100%);
+            border: 2px solid #1f6feb !important;
+            border-radius: 12px;
+            padding: 1.2rem 1.4rem;
+            margin-bottom: 0.8rem;
+            animation: pulse-blue 1s ease-in-out;
+        }
+        @keyframes pulse-blue {
+            0% { border-color: #1f6feb; box-shadow: 0 0 0 0 rgba(31,111,235,0.4); }
+            70% { border-color: #58a6ff; box-shadow: 0 0 0 6px rgba(31,111,235,0); }
+            100% { border-color: #1f6feb; box-shadow: 0 0 0 0 rgba(31,111,235,0); }
+        }
+        
+        /* Migliora leggibilità testo nelle card */
+        .ticker-name {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e6edf3;
+        }
+        .badge-on, .badge-off, .badge-warn, .badge-changed {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Riquadro header */
+        .scanner-header {
+            background: linear-gradient(135deg, #0a0e1a 0%, #121826 100%);
+            border: 1px solid #1f6feb;
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -139,7 +247,7 @@ def is_market_open() -> tuple[bool, str]:
     return True, f"🟢 APERTO — {now_it.strftime('%H:%M')} CET"
 
 # ─────────────────────────────────────────────
-# FUNZIONI CORE
+# FUNZIONI CORE (invariate)
 # ─────────────────────────────────────────────
 def _add_psar(d: pd.DataFrame) -> pd.DataFrame:
     psar_ind    = ta.trend.PSARIndicator(
