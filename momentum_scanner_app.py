@@ -62,7 +62,7 @@ hide_streamlit_style = """
 
         /* ========== SFONDO PERSONALIZZATO ========== */
         .stApp {
-            background: linear-gradient(135deg, #0a0c10 0%, #1a1e2a 100%);
+            background: #87CEEB;
         }
         .main {
             background: transparent;
