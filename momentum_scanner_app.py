@@ -188,6 +188,11 @@ hide_streamlit_style = """
         .scanner-header {
             margin-top: 0rem;
         }
+        /* Forza il corpo a iniziare da 0 */
+        body {
+            margin: 0;
+            padding: 0;
+        }
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
