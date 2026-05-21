@@ -174,6 +174,19 @@ hide_streamlit_style = """
         }
         .scanner-header p {
             color: #5a4a3a; /* Marrone medio */
+            
+        /* ELIMINA COMPLETAMENTE LA BANDA BIANCA SUPERIORE */
+        .main .block-container {
+            padding-top: 0rem !important;
+        }
+        header[data-testid="stHeader"] {
+            display: none;
+        }
+        [data-testid="stDecoration"] {
+            display: none;
+        }
+        .scanner-header {
+            margin-top: 0rem;
         }
     </style>
 """
@@ -187,15 +200,7 @@ def load_tickers_from_json(file_path="Titoli_Dome.json"):
     if not os.path.exists(file_path):
         # Fallback di default se il file non esiste
         return {
-            "A2A.MI": "A2A",
-            "ERG.MI": "ERG",
-            "ENEL.MI": "ENEL",
-            "ENI.MI": "ENI",
-            "ISP.MI": "Intesa Sanpaolo",
-            "UCG.MI": "UniCredit",
-            "LDO.MI": "Leonardo",
-            "RACE.MI": "Ferrari",
-            "BC.MI": "Brunello Cucinelli",
+            "A2A.MI": "A2A",            
         }
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
