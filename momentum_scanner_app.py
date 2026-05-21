@@ -69,8 +69,9 @@ hide_streamlit_style = """
         }
         
         /* ========== PULSANTI EVIDENZIATI ========== */
+               /* Pulsante ANALIZZA SEGNALI (colore rosso tenue) */
         .stButton > button {
-            background: linear-gradient(135deg, #1f6feb, #388bfd) !important;
+            background: linear-gradient(135deg, #c96a6a, #b04e4e) !important;
             color: white !important;
             border: none !important;
             border-radius: 10px !important;
@@ -80,12 +81,12 @@ hide_streamlit_style = """
             font-family: 'DM Sans', sans-serif !important;
             cursor: pointer !important;
             transition: all 0.3s ease !important;
-            box-shadow: 0 4px 12px rgba(31,111,235,0.3) !important;
+            box-shadow: 0 4px 12px rgba(192, 80, 80, 0.3) !important;
         }
         .stButton > button:hover {
             transform: translateY(-2px) !important;
-            box-shadow: 0 8px 20px rgba(31,111,235,0.5) !important;
-            background: linear-gradient(135deg, #388bfd, #58a6ff) !important;
+            background: linear-gradient(135deg, #d47a7a, #c25c5c) !important;
+            box-shadow: 0 8px 20px rgba(192, 80, 80, 0.5) !important;
         }
         /* Pulsante Aggiorna ora nella sidebar */
         .sidebar .stButton > button {
@@ -150,7 +151,7 @@ hide_streamlit_style = """
             font-family: 'IBM Plex Mono', monospace;
             font-size: 1.2rem;
             font-weight: 600;
-            color: #e6edf3;
+            color: #f5e6d3;
         }
         .badge-on, .badge-off, .badge-warn, .badge-changed {
             font-weight: 700;
