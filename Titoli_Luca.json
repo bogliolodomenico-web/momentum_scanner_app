@@ -1,11 +1,7 @@
 {
     "A2A.MI":  "A2A",
-    "ERG.MI":  "ERG",
-    "ENEL.MI": "ENEL",
-    "ENI.MI":  "ENI",
-    "ISP.MI":  "Intesa Sanpaolo",
-    "UCG.MI":  "UniCredit",
-    "LDO.MI":  "Leonardo",
-    "RACE.MI": "Ferrari",
-    "BC.MI":   "Brunello Cucinelli"
+    "NVDA":	   "NVIDIA Corporation",
+    "MSFT":	   "Microsoft Corporation",
+    "AAPL":	   "Apple Inc.",
+    "AMZN":	   "Amazon.com, Inc."
 }
