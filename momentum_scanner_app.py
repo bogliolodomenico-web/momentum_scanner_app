@@ -54,11 +54,35 @@ hide_streamlit_style = """
         /* Nasconde il menu hamburger (tre puntini) */
         #MainMenu {visibility: hidden;}
         
-        /* Rimuove lo spazio bianco extra in alto */
-        .reportview-container .main .block-container {padding-top: 0rem;}
-        
-        /* Ulteriore rimozione spazio in alto */
-        .main > div:first-child {padding-top: 0rem;}
+        /* ========== RIMOZIONE COMPLETA BANDA BIANCA SUPERIORE ========== */
+        /* Rimuove il padding e margine predefinito del container principale */
+        .main .block-container {
+            padding-top: 0rem !important;
+            margin-top: 0rem !important;
+        }
+        /* Nasconde l'header di Streamlit (barra vuota) */
+        header[data-testid="stHeader"] {
+            display: none !important;
+        }
+        /* Forza il primo elemento della pagina a non avere margine superiore */
+        .scanner-header {
+            margin-top: 0rem !important;
+            padding-top: 1rem !important;  /* mantiene un po' di spazio interno */
+        }
+        /* Rimuove eventuale spazio aggiunto dal body */
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* Assicura che l'app parta da 0 */
+        .stApp {
+            margin-top: 0rem !important;
+            padding-top: 0rem !important;
+        }
+        /* Elimina spazi residui in cima a qualsiasi elemento */
+        .element-container, .stMarkdown, .stVerticalBlock {
+            margin-top: 0 !important;
+        }
 
         /* ========== SFONDO PERSONALIZZATO ========== */
         .stApp {
@@ -69,7 +93,7 @@ hide_streamlit_style = """
         }
         
         /* ========== PULSANTI EVIDENZIATI ========== */
-               /* Pulsante ANALIZZA SEGNALI (colore rosso tenue) */
+        /* Pulsante ANALIZZA SEGNALI (colore rosso tenue) */
         .stButton > button {
             background: linear-gradient(135deg, #c96a6a, #b04e4e) !important;
             color: white !important;
@@ -153,48 +177,25 @@ hide_streamlit_style = """
             font-weight: 600;
             color: #f5e6d3;
         }
-        }
         .badge-on, .badge-off, .badge-warn, .badge-changed {
             font-weight: 700;
             letter-spacing: 0.5px;
         }
         
-        /* Riquadro header */
+        /* Riquadro header (avorio) */
         .scanner-header {
-            background: #f5f5dc; /* Avorio classico */
-            border: 1px solid #c0a080; /* Bordo marrone chiaro per abbinarsi */
+            background: #f5f5dc;
+            border: 1px solid #c0a080;
             border-radius: 16px;
             padding: 1.5rem 2rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        /* Adatta il colore del testo all'interno dell'header */
         .scanner-header h1 {
-            color: #3a2a1f; /* Marrone scuro elegante */
+            color: #3a2a1f;
         }
         .scanner-header p {
-            color: #5a4a3a; /* Marrone medio */
-            
-        /* ELIMINA COMPLETAMENTE LA BANDA BIANCA SUPERIORE */
-        .main .block-container {
-            padding-top: 0rem !important;
-        }
-        header[data-testid="stHeader"] {
-            display: none;
-        }
-        [data-testid="stDecoration"] {
-            display: none;
-        }
-        .scanner-header {
-            margin-top: 0rem;
-        }
-        /* Forza il corpo a iniziare da 0 */
-        body {
-            margin: 0;
-            padding: 0;
-        }
-        .stApp {
-            margin-top: -1rem;
+            color: #5a4a3a;
         }
     </style>
 """
