@@ -161,12 +161,19 @@ hide_streamlit_style = """
         
         /* Riquadro header */
         .scanner-header {
-            background: linear-gradient(135deg, #0a0e1a 0%, #121826 100%);
-            border: 1px solid #1f6feb;
+            background: #f5f5dc; /* Avorio classico */
+            border: 1px solid #c0a080; /* Bordo marrone chiaro per abbinarsi */
             border-radius: 16px;
             padding: 1.5rem 2rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        /* Adatta il colore del testo all'interno dell'header */
+        .scanner-header h1 {
+            color: #3a2a1f; /* Marrone scuro elegante */
+        }
+        .scanner-header p {
+            color: #5a4a3a; /* Marrone medio */
         }
     </style>
 """
