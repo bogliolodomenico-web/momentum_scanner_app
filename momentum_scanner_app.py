@@ -193,6 +193,9 @@ hide_streamlit_style = """
             margin: 0;
             padding: 0;
         }
+        .stApp {
+            margin-top: -1rem;
+        }
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
