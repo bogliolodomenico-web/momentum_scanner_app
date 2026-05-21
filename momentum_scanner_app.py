@@ -14,123 +14,76 @@ import warnings
 import time
 from datetime import datetime
 import pytz
+import json
+import os
 
 warnings.filterwarnings("ignore")
 
 # ─────────────────────────────────────────────
-# CONFIGURAZIONE PAGINA
+# CONFIGURAZIONE PAGINA (con menu nascosto)
 # ─────────────────────────────────────────────
 st.set_page_config(
     page_title="Momentum Setup Scanner",
     page_icon="📡",
     layout="wide",
+    menu_items={
+        'Get help': None,
+        'Report a bug': None,
+        'About': None,
+    }
 )
 
 # ─────────────────────────────────────────────
-# CSS
+# CSS per nascondere elementi superflui di Streamlit
 # ─────────────────────────────────────────────
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=DM+Sans:wght@300;400;600;700&display=swap');
-    html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-    .main { background: #0d1117; }
-    .block-container { padding: 1.5rem 2rem 2rem 2rem; max-width: 1400px; }
+hide_streamlit_style = """
+    <style>
+        /* Nasconde il footer "Built with Streamlit" */
+        footer {visibility: hidden;}
+        
+        /* Nasconde il pulsante "Deploy" e altri pulsanti della toolbar */
+        .stDeployButton {display: none;}
+        
+        /* Nasconde la barra decorativa rossa superiore */
+        [data-testid="stDecoration"] {display: none;}
+        
+        /* Nasconde la toolbar (Fork, GitHub, ecc.) */
+        [data-testid="stToolbar"] {display: none;}
+        
+        /* Nasconde il menu hamburger (tre puntini) */
+        #MainMenu {visibility: hidden;}
+        
+        /* Rimuove lo spazio bianco extra in alto */
+        .reportview-container .main .block-container {padding-top: 0rem;}
+        
+        /* Ulteriore rimozione spazio in alto */
+        .main > div:first-child {padding-top: 0rem;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-    .scanner-header {
-        background: linear-gradient(135deg, #0d1b2a 0%, #1a2d45 100%);
-        border: 1px solid #1e3a5f; border-radius: 12px;
-        padding: 1.5rem 2rem; margin-bottom: 1.5rem;
-    }
-    .scanner-header h1 {
-        font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem;
-        color: #58a6ff; margin: 0 0 0.25rem 0; letter-spacing: -0.5px;
-    }
-    .scanner-header p { color: #7d8590; font-size: 0.85rem; margin: 0; }
+# ─────────────────────────────────────────────
+# CARICAMENTO TICKER DA FILE JSON
+# ─────────────────────────────────────────────
+def load_tickers_from_json(file_path="tickers.json"):
+    """Carica la lista dei ticker dal file JSON."""
+    if not os.path.exists(file_path):
+        # Fallback di default se il file non esiste
+        return {
+            "A2A.MI": "A2A",
+            "ERG.MI": "ERG",
+            "ENEL.MI": "ENEL",
+            "ENI.MI": "ENI",
+            "ISP.MI": "Intesa Sanpaolo",
+            "UCG.MI": "UniCredit",
+            "LDO.MI": "Leonardo",
+            "RACE.MI": "Ferrari",
+            "BC.MI": "Brunello Cucinelli",
+        }
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-    .market-open {
-        display:inline-block; background:#0d2818; border:1px solid #238636;
-        border-radius:6px; padding:3px 12px; font-size:0.78rem;
-        font-family:'IBM Plex Mono',monospace; color:#3fb950;
-    }
-    .market-closed {
-        display:inline-block; background:#1a0e0e; border:1px solid #3d1515;
-        border-radius:6px; padding:3px 12px; font-size:0.78rem;
-        font-family:'IBM Plex Mono',monospace; color:#f85149;
-    }
-
-    .card-setup-on {
-        background: linear-gradient(135deg, #0d2818 0%, #0f3320 100%);
-        border: 1.5px solid #238636; border-radius: 10px;
-        padding: 1.2rem 1.4rem; margin-bottom: 0.8rem;
-    }
-    .card-setup-off {
-        background: linear-gradient(135deg, #1a0e0e 0%, #220f0f 100%);
-        border: 1.5px solid #3d1515; border-radius: 10px;
-        padding: 1.2rem 1.4rem; margin-bottom: 0.8rem;
-    }
-    .card-illiquid {
-        background: linear-gradient(135deg, #1a1200 0%, #221800 100%);
-        border: 1.5px solid #4d3800; border-radius: 10px;
-        padding: 1.2rem 1.4rem; margin-bottom: 0.8rem;
-    }
-    .card-changed {
-        background: linear-gradient(135deg, #0d1b2a 0%, #12263d 100%);
-        border: 1.5px solid #1f6feb; border-radius: 10px;
-        padding: 1.2rem 1.4rem; margin-bottom: 0.8rem;
-    }
-
-    .ticker-name {
-        font-family: 'IBM Plex Mono', monospace; font-size: 1.15rem;
-        font-weight: 600; color: #e6edf3;
-    }
-    .badge-on {
-        display:inline-block; background:#1a7f37; color:#7ce38b;
-        border-radius:5px; padding:2px 10px; font-size:0.78rem; font-weight:700;
-        font-family:'IBM Plex Mono',monospace; margin-left:10px;
-        vertical-align:middle; letter-spacing:0.5px;
-    }
-    .badge-off {
-        display:inline-block; background:#3d1515; color:#f85149;
-        border-radius:5px; padding:2px 10px; font-size:0.78rem; font-weight:700;
-        font-family:'IBM Plex Mono',monospace; margin-left:10px;
-        vertical-align:middle; letter-spacing:0.5px;
-    }
-    .badge-warn {
-        display:inline-block; background:#3d2e00; color:#e3b341;
-        border-radius:5px; padding:2px 10px; font-size:0.78rem; font-weight:700;
-        font-family:'IBM Plex Mono',monospace; margin-left:10px; vertical-align:middle;
-    }
-    .badge-changed {
-        display:inline-block; background:#1f3a6e; color:#58a6ff;
-        border-radius:5px; padding:2px 10px; font-size:0.78rem; font-weight:700;
-        font-family:'IBM Plex Mono',monospace; margin-left:6px; vertical-align:middle;
-    }
-
-    .section-title {
-        font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:#7d8590;
-        letter-spacing:1.5px; text-transform:uppercase; border-bottom:1px solid #21262d;
-        padding-bottom:0.4rem; margin:1.2rem 0 0.8rem 0;
-    }
-
-    .stButton > button {
-        background: linear-gradient(135deg, #1f6feb, #388bfd); color:white;
-        border:none; border-radius:8px; padding:0.55rem 1.8rem; font-weight:700;
-        font-size:0.95rem; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s;
-    }
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #388bfd, #58a6ff);
-        transform:translateY(-1px); box-shadow:0 4px 15px rgba(31,111,235,0.35);
-    }
-
-    .params-box {
-        background:#161b22; border:1px solid #21262d; border-radius:8px;
-        padding:0.7rem 1rem; font-size:0.75rem; color:#8b949e;
-        font-family:'IBM Plex Mono',monospace; line-height:1.9; margin-top:0.3rem;
-    }
-    .params-box strong { color:#58a6ff; }
-</style>
-""", unsafe_allow_html=True)
-
+ALL_TICKERS = load_tickers_from_json()
 
 # ─────────────────────────────────────────────
 # PARAMETRI FISSI (indicatori — non modificabili dall'utente)
@@ -148,41 +101,10 @@ CFG_BASE = {
     "RSI_OB_LEVEL": 90, "PSAR_STEP": 0.0012, "PSAR_MAX_STEP": 0.010,
 }
 
-import json
-import os
-
-# Carica i ticker dal file JSON
-def load_tickers_from_json(file_path="Titoli_Dome.json"):
-    if not os.path.exists(file_path):
-        # Fallback nel caso il file non esista
-        return {
-            "A2A.MI": "A2A",
-        }
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-ALL_TICKERS = load_tickers_from_json()
-
-
 # ─────────────────────────────────────────────
 # CALCOLO GIORNI NECESSARI — dinamico su CFG_BASE
 # ─────────────────────────────────────────────
 def calc_required_days(cfg: dict, buffer_pct: float = 0.25) -> int:
-    """
-    Calcola i giorni di calendario minimi per il warmup di tutti
-    gli indicatori, aggiornandosi automaticamente se cambiano i parametri.
-
-      - MACD daily      : MACD_SLOW + MACD_SIGNAL
-      - RSI + slope     : RSI_PERIOD + RSI_SLOPE_BARS
-      - Stocastico      : STOCH_K_PERIOD + STOCH_SMOOTH
-      - EMA             : EMA_PERIOD x 3  (per convergenza stabile)
-      - Volume MA       : VOL_MA_PERIOD
-      - Turnover MA     : TURNOVER_MA_PERIOD
-      - Price Momentum  : PRICE_MOM_BARS
-      - PSAR            : 30 barre fisse
-      - W-MACD weekly   : (W_MACD_SLOW + W_MACD_SIGNAL + W_MACD_MA_PERIOD)
-                          x 7 gg/settimana x 1.4 (festività e gap)
-    """
     daily_bars = [
         cfg["MACD_SLOW"] + cfg["MACD_SIGNAL"],
         cfg["RSI_PERIOD"] + cfg["RSI_SLOPE_BARS"],
@@ -198,15 +120,12 @@ def calc_required_days(cfg: dict, buffer_pct: float = 0.25) -> int:
     max_weekly_cal = weekly_bars * 7 * 1.4
     return int(max(max_daily_cal, max_weekly_cal) * (1 + buffer_pct))
 
-
 REQUIRED_DAYS = calc_required_days(CFG_BASE)
-
 
 # ─────────────────────────────────────────────
 # ORARIO BORSA ITALIANA
 # ─────────────────────────────────────────────
 def is_market_open() -> tuple[bool, str]:
-    """Restituisce (aperto, etichetta) — Borsa Italiana 09:00-17:30 CET."""
     tz_it  = pytz.timezone("Europe/Rome")
     now_it = datetime.now(tz_it)
     wd     = now_it.weekday()
@@ -218,7 +137,6 @@ def is_market_open() -> tuple[bool, str]:
     if hhmm >= 17 * 60 + 30:
         return False, f"🔴 CHIUSO — chiusura 17:30 CET"
     return True, f"🟢 APERTO — {now_it.strftime('%H:%M')} CET"
-
 
 # ─────────────────────────────────────────────
 # FUNZIONI CORE
@@ -232,7 +150,6 @@ def _add_psar(d: pd.DataFrame) -> pd.DataFrame:
     d['PSAR']       = psar_ind.psar()
     d['PSAR_TREND'] = np.where(d['Close'] > d['PSAR'], 1, -1)
     return d
-
 
 def build_indicators(df_d: pd.DataFrame, df_w: pd.DataFrame) -> pd.DataFrame:
     d = df_d.copy()
@@ -285,7 +202,6 @@ def build_indicators(df_d: pd.DataFrame, df_w: pd.DataFrame) -> pd.DataFrame:
     d = _add_psar(d)
     return d.dropna(subset=['PSAR'])
 
-
 def apply_conditions(df: pd.DataFrame, min_conditions: int) -> pd.DataFrame:
     d = df.copy()
     d['RSI_SLOPE'] = d['RSI'] - d['RSI'].shift(CFG_BASE["RSI_SLOPE_BARS"])
@@ -317,14 +233,8 @@ def apply_conditions(df: pd.DataFrame, min_conditions: int) -> pd.DataFrame:
     )
     return d
 
-
 @st.cache_data(ttl=3600, show_spinner=False)
 def download_and_analyze(ticker: str, min_conditions: int) -> dict:
-    """
-    Scarica dati e calcola il segnale. Cache 1 ora.
-    min_conditions è nella firma: se cambia, la cache si invalida
-    automaticamente e il segnale viene ricalcolato.
-    """
     try:
         df_d = yf.download(ticker, period=f"{REQUIRED_DAYS}d",
                            progress=False, auto_adjust=False, interval='1d')
@@ -401,7 +311,6 @@ def download_and_analyze(ticker: str, min_conditions: int) -> dict:
     except Exception as e:
         return {"error": str(e)}
 
-
 # ─────────────────────────────────────────────
 # HELPER UI
 # ─────────────────────────────────────────────
@@ -421,7 +330,6 @@ def _bar_html(score: int, max_score: int, label: str) -> str:
             f'width:100%;overflow:hidden;">'
             f'<div style="height:6px;border-radius:4px;width:{pct}%;{fill}"></div>'
             f'</div></div>')
-
 
 def render_ticker_card(ticker: str, nome: str, data: dict, changed: bool = False):
     if data.get("error"):
@@ -487,7 +395,6 @@ def render_ticker_card(ticker: str, nome: str, data: dict, changed: bool = False
         unsafe_allow_html=True
     )
 
-
 # ─────────────────────────────────────────────
 # SESSION STATE
 # ─────────────────────────────────────────────
@@ -495,7 +402,6 @@ if "prev_signals"  not in st.session_state:
     st.session_state["prev_signals"]  = {}
 if "last_params"   not in st.session_state:
     st.session_state["last_params"]   = {}
-
 
 # ─────────────────────────────────────────────
 # HEADER + STATO MERCATO
@@ -512,9 +418,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 # ─────────────────────────────────────────────
-# SIDEBAR
+# SIDEBAR (tutti i controlli visibili all'utente)
 # ─────────────────────────────────────────────
 with st.sidebar:
 
@@ -637,7 +542,6 @@ with st.sidebar:
         st.cache_data.clear()
         st.session_state["last_params"] = current_params
 
-
 # ─────────────────────────────────────────────
 # BOTTONE PRINCIPALE
 # ─────────────────────────────────────────────
@@ -661,7 +565,6 @@ if not selected_tickers:
     st.warning("Seleziona almeno un ticker.")
     st.stop()
 
-
 # ─────────────────────────────────────────────
 # ANALISI
 # ─────────────────────────────────────────────
@@ -684,7 +587,6 @@ for ticker, data in results_map.items():
         prev[ticker] = new_state
 st.session_state["prev_signals"] = prev
 
-
 # ─────────────────────────────────────────────
 # ORDINAMENTO
 # ─────────────────────────────────────────────
@@ -701,7 +603,6 @@ def sort_key(item):
         return (0, 0, t)
 
 sorted_results = sorted(results_map.items(), key=sort_key)
-
 
 # ─────────────────────────────────────────────
 # RIEPILOGO IN CIMA
@@ -724,7 +625,6 @@ if changed_tickers:
 st.markdown('<div class="section-title">SEGNALI PER TICKER</div>',
             unsafe_allow_html=True)
 
-
 # ─────────────────────────────────────────────
 # CARDS — due colonne
 # ─────────────────────────────────────────────
@@ -741,9 +641,8 @@ with col_r:
         render_ticker_card(ticker, ALL_TICKERS.get(ticker, ticker),
                            data, changed=(ticker in changed_tickers))
 
-
 # ─────────────────────────────────────────────
-# FOOTER
+# FOOTER (opzionale, visibile solo se non nascosto)
 # ─────────────────────────────────────────────
 st.divider()
 st.markdown(
@@ -753,7 +652,6 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True
 )
-
 
 # ─────────────────────────────────────────────
 # AUTO-REFRESH (in fondo per non bloccare il rendering)
