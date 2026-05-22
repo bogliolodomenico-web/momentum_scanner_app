@@ -55,31 +55,25 @@ hide_streamlit_style = """
         #MainMenu {visibility: hidden;}
         
         /* ========== RIMOZIONE COMPLETA BANDA BIANCA SUPERIORE ========== */
-        /* Rimuove il padding e margine predefinito del container principale */
         .main .block-container {
             padding-top: 0rem !important;
             margin-top: 0rem !important;
         }
-        /* Nasconde l'header di Streamlit (barra vuota) */
         header[data-testid="stHeader"] {
             display: none !important;
         }
-        /* Forza il primo elemento della pagina a non avere margine superiore */
         .scanner-header {
             margin-top: 0rem !important;
-            padding-top: 1rem !important;  /* mantiene un po' di spazio interno */
+            padding-top: 1rem !important;
         }
-        /* Rimuove eventuale spazio aggiunto dal body */
         body {
             margin: 0 !important;
             padding: 0 !important;
         }
-        /* Assicura che l'app parta da 0 */
         .stApp {
             margin-top: 0rem !important;
             padding-top: 0rem !important;
         }
-        /* Elimina spazi residui in cima a qualsiasi elemento */
         .element-container, .stMarkdown, .stVerticalBlock {
             margin-top: 0 !important;
         }
@@ -92,8 +86,7 @@ hide_streamlit_style = """
             background: transparent;
         }
         
-        /* ========== PULSANTI EVIDENZIATI ========== */
-        /* Pulsante ANALIZZA SEGNALI (colore rosso tenue) */
+        /* ========== PULSANTI ========== */
         .stButton > button {
             background: linear-gradient(135deg, #c96a6a, #b04e4e) !important;
             color: white !important;
@@ -112,7 +105,6 @@ hide_streamlit_style = """
             background: linear-gradient(135deg, #d47a7a, #c25c5c) !important;
             box-shadow: 0 8px 20px rgba(192, 80, 80, 0.5) !important;
         }
-        /* Pulsante Aggiorna ora nella sidebar */
         .sidebar .stButton > button {
             width: 100%;
             background: linear-gradient(135deg, #238636, #2ea043) !important;
@@ -123,7 +115,7 @@ hide_streamlit_style = """
             box-shadow: 0 4px 12px rgba(35,134,54,0.5) !important;
         }
         
-        /* ========== CARD CON BORDI EVIDENZIATI ========== */
+        /* ========== CARD ========== */
         .card-setup-on {
             background: linear-gradient(135deg, #0d2818 0%, #0f3320 100%);
             border: 2px solid #238636 !important;
@@ -170,7 +162,6 @@ hide_streamlit_style = """
             100% { border-color: #1f6feb; box-shadow: 0 0 0 0 rgba(31,111,235,0); }
         }
         
-        /* Migliora leggibilità testo nelle card */
         .ticker-name {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 1.2rem;
@@ -182,7 +173,6 @@ hide_streamlit_style = """
             letter-spacing: 0.5px;
         }
         
-        /* Riquadro header (avorio) */
         .scanner-header {
             background: #f5f5dc;
             border: 1px solid #c0a080;
@@ -204,12 +194,11 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # ─────────────────────────────────────────────
 # CARICAMENTO TICKER DA FILE JSON
 # ─────────────────────────────────────────────
-def load_tickers_from_json(file_path="Titoli_Luca.json"):
+def load_tickers_from_json(file_path="Titoli_Dome.json"):
     """Carica la lista dei ticker dal file JSON."""
     if not os.path.exists(file_path):
-        # Fallback di default se il file non esiste
         return {
-            "A2A.MI": "A2A",            
+            "A2A.MI": "A2A",
         }
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -217,7 +206,7 @@ def load_tickers_from_json(file_path="Titoli_Luca.json"):
 ALL_TICKERS = load_tickers_from_json()
 
 # ─────────────────────────────────────────────
-# PARAMETRI FISSI (indicatori — non modificabili dall'utente)
+# PARAMETRI FISSI (indicatori)
 # ─────────────────────────────────────────────
 CFG_BASE = {
     "MACD_FAST": 12, "MACD_SLOW": 26, "MACD_SIGNAL": 9,
@@ -233,7 +222,7 @@ CFG_BASE = {
 }
 
 # ─────────────────────────────────────────────
-# CALCOLO GIORNI NECESSARI — dinamico su CFG_BASE
+# CALCOLO GIORNI NECESSARI
 # ─────────────────────────────────────────────
 def calc_required_days(cfg: dict, buffer_pct: float = 0.25) -> int:
     daily_bars = [
@@ -270,7 +259,7 @@ def is_market_open() -> tuple[bool, str]:
     return True, f"🟢 APERTO — {now_it.strftime('%H:%M')} CET"
 
 # ─────────────────────────────────────────────
-# FUNZIONI CORE (invariate)
+# FUNZIONI CORE
 # ─────────────────────────────────────────────
 def _add_psar(d: pd.DataFrame) -> pd.DataFrame:
     psar_ind    = ta.trend.PSARIndicator(
@@ -474,14 +463,17 @@ def render_ticker_card(ticker: str, nome: str, data: dict, changed: bool = False
     sa  = data["setup_active"]
     liq = data["liquidity_ok"]
 
+    # Scegli la classe della card
     card_cls = ("card-changed"   if changed else
                 "card-illiquid"  if not liq else
                 "card-setup-on"  if sa      else
                 "card-setup-off")
 
-    badge = ('<span class="badge-warn">⚠ ILLIQUIDO</span>' if not liq else
-             '<span class="badge-on">▲ SETUP ON</span>'    if sa      else
-             '<span class="badge-off">▼ SETUP OFF</span>')
+    # Badge principale: BUY o SELL
+    if not liq:
+        badge = '<span class="badge-warn">⚠ ILLIQUIDO</span>'
+    else:
+        badge = '<span class="badge-on">▲ BUY</span>' if sa else '<span class="badge-off">▼ SELL</span>'
 
     changed_badge = '<span class="badge-changed">⚡ CAMBIO</span>' if changed else ""
 
@@ -554,7 +546,6 @@ st.markdown(
 # ─────────────────────────────────────────────
 with st.sidebar:
 
-    # ── Ticker ──────────────────────────────
     st.markdown("### 🎛️ Ticker")
     selected_tickers = st.multiselect(
         "Seleziona i titoli",
@@ -564,15 +555,14 @@ with st.sidebar:
     )
     ordine = st.selectbox(
         "Ordinamento",
-        ["Setup ON prima → Score", "Score decrescente", "Ticker A→Z"],
+        ["BUY prima → Score", "Score decrescente", "Ticker A→Z"],
     )
 
-    # ── Livello di Rischio ──────────────────
     st.divider()
     st.markdown("### ⚠️ Livello di Rischio")
     st.caption(
         "Definisce quante **condizioni su 6** devono essere soddisfatte "
-        "per generare un segnale SETUP ON. "
+        "per generare un segnale BUY. "
         "Più alto = segnali rari ma affidabili. "
         "Più basso = segnali frequenti ma meno filtrati."
     )
@@ -592,10 +582,9 @@ with st.sidebar:
     }
     st.info(risk_desc[risk_level])
 
-    # ── Parametri di Uscita ─────────────────
     st.divider()
     st.markdown("### 🎯 Parametri di Uscita")
-    st.caption("Valori di riferimento per la gestione della posizione.")
+    st.caption("Valori di riferimento per la gestione della posizione (solo informativi).")
 
     tp_pct = st.slider(
         "Take Profit",
@@ -618,7 +607,6 @@ with st.sidebar:
         help="Giorni massimi in cui mantenere la posizione aperta, indipendentemente dal segnale.",
     )
 
-    # ── Riepilogo ───────────────────────────
     st.divider()
     st.markdown("### 📋 Riepilogo Attivo")
     st.markdown(
@@ -642,7 +630,6 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # ── Auto-refresh ────────────────────────
     st.divider()
     st.markdown("### 🔄 Aggiornamento")
     auto_refresh = st.checkbox(
@@ -667,7 +654,6 @@ with st.sidebar:
         st.session_state["prev_signals"] = {}
         st.rerun()
 
-    # Auto-clear cache se cambia MIN_CONDITIONS
     current_params = {"min_conditions": min_conditions}
     if st.session_state["last_params"] != current_params:
         st.cache_data.clear()
@@ -726,7 +712,7 @@ def sort_key(item):
     if d.get("error"):
         return (9, 0, t)
     chg = 0 if t in changed_tickers else 1
-    if ordine == "Setup ON prima → Score":
+    if ordine == "BUY prima → Score":
         return (chg, 0 if d["setup_active"] else 1, -d["score"], t)
     elif ordine == "Score decrescente":
         return (chg, -d["score"], t)
@@ -744,8 +730,8 @@ n_err     = sum(1 for _, d in sorted_results if d.get("error"))
 n_changed = len(changed_tickers)
 
 c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("✅ Setup ON",    n_on)
-c2.metric("⛔ Setup OFF",   n_off)
+c1.metric("✅ BUY",    n_on)
+c2.metric("⛔ SELL",   n_off)
 c3.metric("⚡ Cambi stato", n_changed)
 c4.metric("⚠️ Errori",     n_err)
 c5.metric("🕒 Aggiornato",  datetime.now().strftime("%H:%M:%S"))
@@ -773,7 +759,7 @@ with col_r:
                            data, changed=(ticker in changed_tickers))
 
 # ─────────────────────────────────────────────
-# FOOTER (opzionale, visibile solo se non nascosto)
+# FOOTER
 # ─────────────────────────────────────────────
 st.divider()
 st.markdown(
@@ -785,7 +771,7 @@ st.markdown(
 )
 
 # ─────────────────────────────────────────────
-# AUTO-REFRESH (in fondo per non bloccare il rendering)
+# AUTO-REFRESH
 # ─────────────────────────────────────────────
 if auto_refresh:
     time.sleep(refresh_mins * 60)
