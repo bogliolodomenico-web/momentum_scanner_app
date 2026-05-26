@@ -19,7 +19,7 @@ import os
 
 
 from datetime import timedelta
-start_date = (datetime.now() - timedelta(days=200)).strftime("%Y-%m-%d")
+start_date = (datetime.now() - timedelta(days=400)).strftime("%Y-%m-%d")
 
 warnings.filterwarnings("ignore")
 
