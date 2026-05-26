@@ -55,25 +55,31 @@ hide_streamlit_style = """
         #MainMenu {visibility: hidden;}
         
         /* ========== RIMOZIONE COMPLETA BANDA BIANCA SUPERIORE ========== */
+        /* Rimuove il padding e margine predefinito del container principale */
         .main .block-container {
             padding-top: 0rem !important;
             margin-top: 0rem !important;
         }
+        /* Nasconde l'header di Streamlit (barra vuota) */
         header[data-testid="stHeader"] {
             display: none !important;
         }
+        /* Forza il primo elemento della pagina a non avere margine superiore */
         .scanner-header {
             margin-top: 0rem !important;
-            padding-top: 1rem !important;
+            padding-top: 1rem !important;  /* mantiene un po' di spazio interno */
         }
+        /* Rimuove eventuale spazio aggiunto dal body */
         body {
             margin: 0 !important;
             padding: 0 !important;
         }
+        /* Assicura che l'app parta da 0 */
         .stApp {
             margin-top: 0rem !important;
             padding-top: 0rem !important;
         }
+        /* Elimina spazi residui in cima a qualsiasi elemento */
         .element-container, .stMarkdown, .stVerticalBlock {
             margin-top: 0 !important;
         }
@@ -86,7 +92,8 @@ hide_streamlit_style = """
             background: transparent;
         }
         
-        /* ========== PULSANTI ========== */
+        /* ========== PULSANTI EVIDENZIATI ========== */
+        /* Pulsante ANALIZZA SEGNALI (colore rosso tenue) */
         .stButton > button {
             background: linear-gradient(135deg, #c96a6a, #b04e4e) !important;
             color: white !important;
@@ -105,6 +112,7 @@ hide_streamlit_style = """
             background: linear-gradient(135deg, #d47a7a, #c25c5c) !important;
             box-shadow: 0 8px 20px rgba(192, 80, 80, 0.5) !important;
         }
+        /* Pulsante Aggiorna ora nella sidebar */
         .sidebar .stButton > button {
             width: 100%;
             background: linear-gradient(135deg, #238636, #2ea043) !important;
@@ -115,9 +123,9 @@ hide_streamlit_style = """
             box-shadow: 0 4px 12px rgba(35,134,54,0.5) !important;
         }
         
-        /* ========== CARD ========== */
-        .card-setup-on {
-            background: linear-gradient(135deg, #0d2818 0%, #0f3320 100%);
+        /* ========== CARD BUY (sfondo chiaro verde) ========== */
+        .card-buy {
+            background: linear-gradient(135deg, #e6f4ea 0%, #d0ebd6 100%);
             border: 2px solid #238636 !important;
             border-radius: 12px;
             padding: 1.2rem 1.4rem;
@@ -125,36 +133,39 @@ hide_streamlit_style = """
             box-shadow: 0 2px 8px rgba(35,134,54,0.2);
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card-setup-on:hover {
+        .card-buy:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(35,134,54,0.4);
         }
-        .card-setup-off {
-            background: linear-gradient(135deg, #1a0e0e 0%, #220f0f 100%);
+        
+        /* ========== CARD SELL (sfondo chiaro rosso) ========== */
+        .card-sell {
+            background: linear-gradient(135deg, #fce8e6 0%, #f8d7d5 100%);
             border: 2px solid #da3633 !important;
             border-radius: 12px;
             padding: 1.2rem 1.4rem;
             margin-bottom: 0.8rem;
             box-shadow: 0 2px 8px rgba(218,54,51,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card-setup-off:hover {
+        .card-sell:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(218,54,51,0.3);
         }
+        
+        /* CARD per titoli illiquidi (ambrato) */
         .card-illiquid {
-            background: linear-gradient(135deg, #1a1200 0%, #221800 100%);
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe6b3 100%);
             border: 2px solid #d29922 !important;
             border-radius: 12px;
             padding: 1.2rem 1.4rem;
             margin-bottom: 0.8rem;
         }
+        
+        /* Classe aggiuntiva per cambio stato (bordo pulsante blu) */
         .card-changed {
-            background: linear-gradient(135deg, #0d1b2a 0%, #12263d 100%);
-            border: 2px solid #1f6feb !important;
-            border-radius: 12px;
-            padding: 1.2rem 1.4rem;
-            margin-bottom: 0.8rem;
             animation: pulse-blue 1s ease-in-out;
+            border-width: 3px !important;
         }
         @keyframes pulse-blue {
             0% { border-color: #1f6feb; box-shadow: 0 0 0 0 rgba(31,111,235,0.4); }
@@ -162,17 +173,39 @@ hide_streamlit_style = """
             100% { border-color: #1f6feb; box-shadow: 0 0 0 0 rgba(31,111,235,0); }
         }
         
+        /* Migliora leggibilità testo nelle card */
         .ticker-name {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 1.2rem;
             font-weight: 600;
-            color: #f5e6d3;
+            color: #1a1a1a;
         }
-        .badge-on, .badge-off, .badge-warn, .badge-changed {
+        .badge-buy, .badge-sell, .badge-warn, .badge-changed {
             font-weight: 700;
             letter-spacing: 0.5px;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-left: 10px;
+        }
+        .badge-buy {
+            background-color: #238636;
+            color: white;
+        }
+        .badge-sell {
+            background-color: #da3633;
+            color: white;
+        }
+        .badge-warn {
+            background-color: #d29922;
+            color: #1a1a1a;
+        }
+        .badge-changed {
+            background-color: #1f6feb;
+            color: white;
         }
         
+        /* Riquadro header (avorio) */
         .scanner-header {
             background: #f5f5dc;
             border: 1px solid #c0a080;
@@ -187,6 +220,15 @@ hide_streamlit_style = """
         .scanner-header p {
             color: #5a4a3a;
         }
+        
+        /* Testo prezzi su sfondo chiaro */
+        .card-buy .ticker-name, .card-sell .ticker-name {
+            color: #1a1a1a;
+        }
+        .card-buy [style*="font-family:IBM Plex Mono"], 
+        .card-sell [style*="font-family:IBM Plex Mono"] {
+            color: #1a1a1a !important;
+        }
     </style>
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -197,8 +239,9 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 def load_tickers_from_json(file_path="Titoli_Luca.json"):
     """Carica la lista dei ticker dal file JSON."""
     if not os.path.exists(file_path):
+        # Fallback di default se il file non esiste
         return {
-            "A2A.MI": "A2A",
+            "A2A.MI": "A2A",            
         }
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -206,7 +249,7 @@ def load_tickers_from_json(file_path="Titoli_Luca.json"):
 ALL_TICKERS = load_tickers_from_json()
 
 # ─────────────────────────────────────────────
-# PARAMETRI FISSI (indicatori)
+# PARAMETRI FISSI (indicatori — non modificabili dall'utente)
 # ─────────────────────────────────────────────
 CFG_BASE = {
     "MACD_FAST": 12, "MACD_SLOW": 26, "MACD_SIGNAL": 9,
@@ -222,7 +265,7 @@ CFG_BASE = {
 }
 
 # ─────────────────────────────────────────────
-# CALCOLO GIORNI NECESSARI
+# CALCOLO GIORNI NECESSARI — dinamico su CFG_BASE
 # ─────────────────────────────────────────────
 def calc_required_days(cfg: dict, buffer_pct: float = 0.25) -> int:
     daily_bars = [
@@ -259,7 +302,7 @@ def is_market_open() -> tuple[bool, str]:
     return True, f"🟢 APERTO — {now_it.strftime('%H:%M')} CET"
 
 # ─────────────────────────────────────────────
-# FUNZIONI CORE
+# FUNZIONI CORE (invariate)
 # ─────────────────────────────────────────────
 def _add_psar(d: pd.DataFrame) -> pd.DataFrame:
     psar_ind    = ta.trend.PSARIndicator(
@@ -443,19 +486,19 @@ def _bar_html(score: int, max_score: int, label: str) -> str:
     else:
         fill = "background:linear-gradient(90deg,#da3633,#f85149)"
     return (f'<div style="margin-top:0.45rem;">'
-            f'<div style="font-size:0.72rem;color:#7d8590;'
+            f'<div style="font-size:0.72rem;color:#4a4a4a;'
             f'font-family:IBM Plex Mono,monospace;margin-bottom:3px;">'
             f'{label} {score}/{max_score}</div>'
-            f'<div style="background:#21262d;border-radius:4px;height:6px;'
+            f'<div style="background:#e0e0e0;border-radius:4px;height:6px;'
             f'width:100%;overflow:hidden;">'
             f'<div style="height:6px;border-radius:4px;width:{pct}%;{fill}"></div>'
             f'</div></div>')
 
 def render_ticker_card(ticker: str, nome: str, data: dict, changed: bool = False):
     if data.get("error"):
-        st.markdown(f'<div class="card-setup-off">'
+        st.markdown(f'<div class="card-sell">'
                     f'<span class="ticker-name">{ticker}</span>'
-                    f'<span class="badge-off">ERRORE</span>'
+                    f'<span class="badge-sell">ERRORE</span>'
                     f'<div style="color:#6e4040;font-size:0.8rem;margin-top:0.5rem;">'
                     f'{data["error"]}</div></div>', unsafe_allow_html=True)
         return
@@ -463,54 +506,58 @@ def render_ticker_card(ticker: str, nome: str, data: dict, changed: bool = False
     sa  = data["setup_active"]
     liq = data["liquidity_ok"]
 
-    # Scegli la classe della card
-    card_cls = ("card-changed"   if changed else
-                "card-illiquid"  if not liq else
-                "card-setup-on"  if sa      else
-                "card-setup-off")
-
-    # Badge principale: BUY o SELL
+    # Determina classe base della card (senza tenere conto di changed)
     if not liq:
-        badge = '<span class="badge-warn">⚠ ILLIQUIDO</span>'
+        base_cls = "card-illiquid"
+        badge = '<span class="badge-warn">⚠ LIQUIDO</span>'
     else:
-        badge = '<span class="badge-on">▲ BUY</span>' if sa else '<span class="badge-off">▼ SELL</span>'
+        if sa:
+            base_cls = "card-buy"
+            badge = '<span class="badge-buy">BUY</span>'
+        else:
+            base_cls = "card-sell"
+            badge = '<span class="badge-sell">SELL</span>'
+
+    # Aggiunge eventuale classe per cambio stato (solo bordo animato)
+    if changed:
+        base_cls += " card-changed"
 
     changed_badge = '<span class="badge-changed">⚡ CAMBIO</span>' if changed else ""
 
     px = data["rt_price"] if data.get("rt_price") else data["price"]
 
     if data.get("rt_today"):
-        t_html = (f'<span style="color:#3fb950;font-size:0.7rem;font-family:monospace;">'
+        t_html = (f'<span style="color:#1a1a1a;font-size:0.7rem;font-family:monospace;">'
                   f'🔴 LIVE {data["rt_time"]}</span>')
     elif data.get("rt_time"):
-        t_html = (f'<span style="color:#7d8590;font-size:0.7rem;font-family:monospace;">'
+        t_html = (f'<span style="color:#4a4a4a;font-size:0.7rem;font-family:monospace;">'
                   f'📅 {data["rt_time"]}</span>')
     else:
-        t_html = (f'<span style="color:#4d5566;font-size:0.7rem;font-family:monospace;">'
+        t_html = (f'<span style="color:#4a4a4a;font-size:0.7rem;font-family:monospace;">'
                   f'📅 chiusura {data["date"]}</span>')
 
     ytd_html = ""
     if data.get("ytd_ret") is not None:
-        c = "#3fb950" if data["ytd_ret"] >= 0 else "#f85149"
+        c = "#238636" if data["ytd_ret"] >= 0 else "#da3633"
         ytd_html = f'<span style="color:{c};font-size:0.78rem;margin-left:10px;">YTD {data["ytd_ret"]:+.1f}%</span>'
 
     w52_html = ""
     if data.get("w52_high"):
         d52 = (px / data["w52_high"] - 1) * 100
-        w52_html = f'<span style="color:#7d8590;font-size:0.75rem;margin-left:8px;">Max52w {d52:+.1f}%</span>'
+        w52_html = f'<span style="color:#4a4a4a;font-size:0.75rem;margin-left:8px;">Max52w {d52:+.1f}%</span>'
 
     gate_bar  = _bar_html(data["gate_score"], 4, "GATE")
     score_bar = _bar_html(data["score"],      6, "SCORE")
 
     st.markdown(
-        f'<div class="{card_cls}">'
+        f'<div class="{base_cls}">'
         f'<div style="display:flex;align-items:center;flex-wrap:wrap;">'
         f'<span class="ticker-name">{ticker}</span>'
-        f'<span style="color:#7d8590;font-size:0.85rem;margin-left:8px;">{nome}</span>'
+        f'<span style="color:#4a4a4a;font-size:0.85rem;margin-left:8px;">{nome}</span>'
         f'{badge}{changed_badge}</div>'
         f'<div style="margin-top:0.4rem;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;">'
         f'<span style="font-family:IBM Plex Mono,monospace;font-size:1.25rem;'
-        f'color:#e6edf3;font-weight:700;">{px:.3f} €</span>'
+        f'color:#1a1a1a;font-weight:700;">{px:.3f} €</span>'
         f'{ytd_html}{w52_html}</div>'
         f'<div style="margin-top:2px;">{t_html}</div>'
         f'{gate_bar}{score_bar}'
@@ -546,6 +593,7 @@ st.markdown(
 # ─────────────────────────────────────────────
 with st.sidebar:
 
+    # ── Ticker ──────────────────────────────
     st.markdown("### 🎛️ Ticker")
     selected_tickers = st.multiselect(
         "Seleziona i titoli",
@@ -555,9 +603,10 @@ with st.sidebar:
     )
     ordine = st.selectbox(
         "Ordinamento",
-        ["BUY prima → Score", "Score decrescente", "Ticker A→Z"],
+        ["Setup ON prima → Score", "Score decrescente", "Ticker A→Z"],
     )
 
+    # ── Livello di Rischio ──────────────────
     st.divider()
     st.markdown("### ⚠️ Livello di Rischio")
     st.caption(
@@ -582,9 +631,10 @@ with st.sidebar:
     }
     st.info(risk_desc[risk_level])
 
+    # ── Parametri di Uscita ─────────────────
     st.divider()
     st.markdown("### 🎯 Parametri di Uscita")
-    st.caption("Valori di riferimento per la gestione della posizione (solo informativi).")
+    st.caption("Valori di riferimento per la gestione della posizione.")
 
     tp_pct = st.slider(
         "Take Profit",
@@ -607,6 +657,7 @@ with st.sidebar:
         help="Giorni massimi in cui mantenere la posizione aperta, indipendentemente dal segnale.",
     )
 
+    # ── Riepilogo ───────────────────────────
     st.divider()
     st.markdown("### 📋 Riepilogo Attivo")
     st.markdown(
@@ -630,6 +681,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
+    # ── Auto-refresh ────────────────────────
     st.divider()
     st.markdown("### 🔄 Aggiornamento")
     auto_refresh = st.checkbox(
@@ -654,6 +706,7 @@ with st.sidebar:
         st.session_state["prev_signals"] = {}
         st.rerun()
 
+    # Auto-clear cache se cambia MIN_CONDITIONS
     current_params = {"min_conditions": min_conditions}
     if st.session_state["last_params"] != current_params:
         st.cache_data.clear()
@@ -712,7 +765,7 @@ def sort_key(item):
     if d.get("error"):
         return (9, 0, t)
     chg = 0 if t in changed_tickers else 1
-    if ordine == "BUY prima → Score":
+    if ordine == "Setup ON prima → Score":
         return (chg, 0 if d["setup_active"] else 1, -d["score"], t)
     elif ordine == "Score decrescente":
         return (chg, -d["score"], t)
@@ -731,7 +784,7 @@ n_changed = len(changed_tickers)
 
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("✅ BUY",    n_on)
-c2.metric("⛔ SELL",   n_off)
+c2.metric("❌ SELL",   n_off)
 c3.metric("⚡ Cambi stato", n_changed)
 c4.metric("⚠️ Errori",     n_err)
 c5.metric("🕒 Aggiornato",  datetime.now().strftime("%H:%M:%S"))
@@ -759,7 +812,7 @@ with col_r:
                            data, changed=(ticker in changed_tickers))
 
 # ─────────────────────────────────────────────
-# FOOTER
+# FOOTER (opzionale, visibile solo se non nascosto)
 # ─────────────────────────────────────────────
 st.divider()
 st.markdown(
@@ -771,7 +824,7 @@ st.markdown(
 )
 
 # ─────────────────────────────────────────────
-# AUTO-REFRESH
+# AUTO-REFRESH (in fondo per non bloccare il rendering)
 # ─────────────────────────────────────────────
 if auto_refresh:
     time.sleep(refresh_mins * 60)
