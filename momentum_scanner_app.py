@@ -240,7 +240,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # ─────────────────────────────────────────────
 # CARICAMENTO TICKER DA FILE JSON
 # ─────────────────────────────────────────────
-def load_tickers_from_json(file_path="Titoli_Marco.json"):
+def load_tickers_from_json(file_path="Titoli_Luca.json"):
     """Carica la lista dei ticker dal file JSON."""
     if not os.path.exists(file_path):
         # Fallback di default se il file non esiste
